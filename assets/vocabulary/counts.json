@@ -1,0 +1,35 @@
+{
+  "decks": [
+    {
+      "id": "gaokao",
+      "name": "高考3500",
+      "words": 3875,
+      "with_examples": 3561,
+      "with_forms": 2924
+    },
+    {
+      "id": "cet4",
+      "name": "大学英语四级",
+      "words": 3739,
+      "with_examples": 3734,
+      "with_forms": 3064
+    },
+    {
+      "id": "cet6",
+      "name": "大学英语六级",
+      "words": 2078,
+      "with_examples": 2047,
+      "with_forms": 1726
+    },
+    {
+      "id": "ielts",
+      "name": "雅思",
+      "words": 3575,
+      "with_examples": 3477,
+      "with_forms": 2867
+    }
+  ],
+  "unique_words": 7912,
+  "raw_bytes": 2340176,
+  "compressed_bytes": 910701
+}
