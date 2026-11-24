@@ -21,3 +21,7 @@
 .vscode/
 Thumbs.db
 Desktop.ini
+
+# Private code-signing material
+*.pfx
+*.p12
