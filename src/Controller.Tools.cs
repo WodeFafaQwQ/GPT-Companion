@@ -1,0 +1,16 @@
+using System;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace DragonCompanion {
+public sealed partial class Controller {
+ public ScheduleBook Schedules;
+ public int ScheduleVersion;
+ void BuildToolsMenu(){var parent=new ToolStripMenuItem("实用工具");var menu=new CompanionMenu();parent.DropDown=menu;menu.Items.Add("番茄钟",null,(s,e)=>ShowCountdown());menu.Items.Add("日程提醒",null,(s,e)=>ShowPanel("schedules"));menu.Items.Add("制定计划",null,(s,e)=>{ShowPanel();Panel.Navigate("plans");});menu.Items.Add("单词卡片",null,(s,e)=>ShowPanel("vocabulary"));menu.Items.Add(new ToolStripSeparator());menu.Items.Add("进入实用工具",null,(s,e)=>{ShowPanel();Panel.Navigate("tools");});parent.DropDownOpening+=(s,e)=>menu.PrepareLayout();Menu.Items.Add(parent);}
+ public void EditSchedule(ScheduleEntry entry=null){if(entry!=null&&!string.IsNullOrEmpty(entry.PlanId)){ShowPanel();Panel.OpenPlan(entry.PlanId);return;}using(var dialog=new ScheduleDialog(entry))if(dialog.ShowDialog(Panel!=null&&!Panel.IsDisposed&&Panel.Visible?(IWin32Window)Panel:Pet)==DialogResult.OK){try{SaveSchedule(dialog.Result,DateTime.Now);if(Panel!=null&&!Panel.IsDisposed)Panel.RefreshSchedules(DateTime.Now);}catch(Exception ex){MessageBox.Show(Panel,"日程未保存："+ex.Message+"\n\n"+Theme.Credit,"日程提醒");}}}
+ public void SaveSchedule(ScheduleEntry entry,DateTime now){entry.Validate(now);var updated=Schedules.Copy();var existing=updated.Items.FirstOrDefault(x=>x.Id==entry.Id);var saved=entry.Copy();bool sameTiming=existing!=null&&existing.LocalStart==saved.LocalStart&&existing.Repeat==saved.Repeat&&existing.Days.SequenceEqual(saved.Days);saved.LastHandled=sameTiming?existing.LastHandled:ScheduleEntry.Stamp(saved.Latest(now)??DateTime.MinValue);updated.Items.RemoveAll(x=>x.Id==saved.Id);updated.Items.Add(saved);Store.Save("schedules.json",updated);Schedules=updated;ScheduleVersion++;}
+ public void ToggleSchedule(string id,bool enabled){var updated=Schedules.Copy();var entry=updated.Items.FirstOrDefault(x=>x.Id==id);if(entry==null)return;if(enabled&&entry.Repeat=="once"&&entry.Start<=DateTime.Now){EditSchedule(entry);return;}entry.Enabled=enabled;if(enabled)entry.LastHandled=ScheduleEntry.Stamp(entry.Latest(DateTime.Now)??DateTime.MinValue);Store.Save("schedules.json",updated);Schedules=updated;ScheduleVersion++;}
+ public void DeleteSchedule(ScheduleEntry entry){if(MessageBox.Show(Panel,"删除日程“"+entry.Title+"”？\n\n"+Theme.Credit,"日程提醒",MessageBoxButtons.OKCancel,MessageBoxIcon.Question)!=DialogResult.OK)return;var updated=Schedules.Copy();updated.Items.RemoveAll(x=>x.Id==entry.Id);Store.Save("schedules.json",updated);Schedules=updated;ScheduleVersion++;if(Panel!=null&&!Panel.IsDisposed)Panel.RefreshSchedules(DateTime.Now);}
+ public void PollSchedules(DateTime now){if(!Schedules.HasUnhandledOccurrence(now))return;bool changed;var updated=Schedules.Copy();var due=updated.CollectDue(now,out changed);if(!changed)return;Store.Save("schedules.json",updated);Schedules=updated;ScheduleVersion++;if(due.Count>0){string message=string.Join("\n\n",due.Select(occurrence=>occurrence.Entry.Title+"\n"+occurrence.Time.ToString("MM-dd HH:mm")+(string.IsNullOrWhiteSpace(occurrence.Entry.Notes)?"":"\n"+occurrence.Entry.Notes)));if(due.Count>1)message="有 "+due.Count+" 项日程到时：\n"+message;Receive(new PetEvent{Kind="reminder",Source="日程提醒",Message=message});}}
+}
+}
