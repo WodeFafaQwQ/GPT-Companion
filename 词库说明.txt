@@ -1,0 +1,40 @@
+GPT 桌面伙伴 · 单词卡片数据来源
+
+词库名称和实际条目
+  高考3500：3875 条。沿用原词表名称，含拆分词条、短语及大小写去重。
+  大学英语四级：3739 条。
+  大学英语六级：2078 条。
+  雅思：3575 条。
+
+来源
+  高考词表来自 RealKai42/qwerty-learner 的 GaoKao_3500.json。
+  https://github.com/RealKai42/qwerty-learner
+  源项目 GPL v3 许可全文随 vocabulary-data-source.zip 提供。
+
+  释义和例句来自 kajweb/dict 公开词库。
+  https://github.com/kajweb/dict
+  使用 GaoZhongluan_2、CET4luan_2、CET6_2、IELTS_3 及补充词库
+  GaoZhong_3、CET4_3、CET6_3、IELTS_2 中的数据。
+  原项目注明数据来自有道背单词，项目说明随词库源数据保留。
+
+  词形变化来自 skywind3000/ECDICT 的 exchange 字段。
+  https://github.com/skywind3000/ECDICT
+  该项目许可全文及本包所用的 CSV 条目随源数据提供。
+
+数据处理
+  按单词忽略大小写去重，保留各词库的收录关系。
+  解释按原词性合并，例句最多收录两组，词形显示已收录的常用变化。
+  原数据未提供例句或词形时，卡片明确显示缺失信息。
+  部分词条没有词形变化，源词库未区分“无变化”和“未收录”时不推测补造。
+  使用中可在自定义词库填写和编辑单词的学习内容。
+
+重建
+  vocabulary-data-source.zip 包含对应公开词库源数据、许可及
+  tools/Build-Vocabulary.py。解压后用 Python 运行该脚本可重建
+  assets/vocabulary/catalog.json.gz。ECDICT 的 CSV 仅包含本包用到的行。
+
+学习记录
+  自定义词库和掌握记录保存于本机用户数据目录的 vocabulary.json。
+  软件保留 vocabulary.recovery.json 恢复副本。
+
+developed by WodeFafa

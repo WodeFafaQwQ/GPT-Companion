@@ -1,0 +1,23 @@
+# Local build and generated outputs
+/dist/
+/release/
+/tests/
+*.tmp
+*.log
+# Private application records and authentication
+**/settings.json
+**/schedules*.json
+**/vocabulary.json
+**/vocabulary.recovery.json
+**/quota*.json
+**/history.json
+**/auth.json
+**/.codex/
+**/.env*
+*.pem
+*.key
+# Editor and OS state
+.vs/
+.vscode/
+Thumbs.db
+Desktop.ini
